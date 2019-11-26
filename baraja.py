@@ -1,25 +1,77 @@
 import random
-
-palos = ['Oro', 'Copa', 'Espada', 'Basto']
-cartas = ['As', '2', '3', '4', '5', '6', '7', 'Sota', 'Caballo', 'Rey']
-
-
-def crearBaraja():
-    baraja = []
-    for palo in palos:
-        for carta in cartas:
-            baraja.append(f'{carta} de {palo}')
-    return baraja
+_palos = ['o', 'c', 'e', 'b']
+_cartas = ['A', '2', '3', '4', '5', '6', '7', 'S', 'C', 'R']
 
 
-def eligeCarta(i, longitud):
-    return random.randint(longitud-1)
+def baraja():
+    result = []
+    for palo in _palos:
+        for carta in _cartas:
+            result.append(carta + palo)
+
+    return result
 
 
-def barajar(baraja):
-    for i in range(len(baraja)):
-        aux = baraja[i]
-        numRandom = eligeCarta(i, len(baraja))
-        baraja[i] = baraja[numRandom]
-        baraja[numRandom] = aux
-    return baraja
+def elige_carta(i, longitud):
+    return random.randint(0, longitud-1)
+
+
+def mezclar(b):
+    for i in range(len(b)):
+        # Elegimos carta de intercambio al azar
+        al_azar = elige_carta(i, len(b))
+
+        # Cambiamos la carta por orden (i) por la carta elegida al azar
+        aux = b[i]
+        b[i] = b[al_azar]
+        b[al_azar] = aux
+
+    return b
+
+
+class Baraja():
+    naipes = []
+    __palos = ['o', 'c', 'e', 'b']
+    __cartas = ['A', '2', '3', '4', '5', '6', '7', 'S', 'C', 'R']
+
+    def __init__(self):
+        self.naipes = []
+        for palo in self.__palos:
+            for carta in self.__cartas:
+                self.naipes.append(carta + palo)
+
+    def elige_carta(self, i):
+        return random.randint(0, len(self.naipes)-1)
+
+    def mezclar(self):
+        for i in range(len(self.naipes)):
+            # Elegimos carta de intercambio al azar
+            al_azar = self.elige_carta(i)
+
+            # Cambiamos la carta por orden (i) por la carta elegida al azar
+            aux = self.naipes[i]
+            self.naipes[i] = self.naipes[al_azar]
+            self.naipes[al_azar] = aux
+
+    def repartirPrimeraSolucion(self, mano, jugadores):
+        jugadas = []
+        for i in range(jugadores):
+            jugadas.append([])
+            for j in range(mano):
+                jugadas[i].append(self.naipes[j*jugadores+i])
+
+        cartas = mano * jugadores
+        self.naipes = self.naipes[cartas:]
+
+        return jugadas
+
+    def repartirSegundaSolucion(self, mano, jugadores):
+        res = []
+        for j in range(jugadores):
+            res.append([])
+
+        for c in range(mano):
+            for item in res:
+                carta = self.naipes.pop(0)
+                item.append(carta)
+        return res
